@@ -1,0 +1,20 @@
+{
+  "name": "teamcheck-fullstack",
+  "version": "1.0.0",
+  "description": "Full-stack TeamCheck application",
+  "scripts": {
+    "start": "./start_application.sh",
+    "start:backend": "cd backend && nodemon start",
+    "start:frontend": "cd frontend && npm start",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "build": "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
