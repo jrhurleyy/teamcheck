@@ -37,34 +37,38 @@ io.on("connection", (socket) => {
 
 // Use the in-memory array to store user info and statuses
 let users = [
-  { userID: 1, name: "John Doe", status: "online", lastUpdate: new Date() },
+  { userID: 1, name: "John Doe", login: "john.doe", status: "online", lastUpdate: new Date() },
   {
     userID: 2,
+    login: "jane.smith",
     name: "Jane Smith",
     status: "in a meeting",
     lastUpdate: new Date(),
   },
-  { userID: 3, name: "Jim Brown", status: "offline", lastUpdate: new Date() },
+  { userID: 3, login: "jim.brown", name: "Jim Brown", status: "offline", lastUpdate: new Date() },
   {
     userID: 4,
+    login: "alice.johnson",
     name: "Alice Johnson",
     status: "offline",
     lastUpdate: new Date(),
   },
-  { userID: 5, name: "Bob Lee", status: "online", lastUpdate: new Date() },
+  { userID: 5, login: "bob.lee", name: "Bob Lee", status: "online", lastUpdate: new Date() },
   {
     userID: 6,
+    login: "charlie.kim",
     name: "Charlie Kim",
     status: "in a meeting",
     lastUpdate: new Date(),
   },
   {
     userID: 7,
+    login: "diana.prince",
     name: "Diana Prince",
     status: "in a meeting",
     lastUpdate: new Date(),
   },
-  { userID: 8, name: "Ethan Hunt", status: "online", lastUpdate: new Date() },
+  { userID: 8, login: "ethan.hunt", name: "Ethan Hunt", status: "online", lastUpdate: new Date() },
 ];
 
 app.get("/status", cors(corsOptions), (req, res) => {
