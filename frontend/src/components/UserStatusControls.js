@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { postData } from "../helpers/fetch";
+import { API_BASE_URL } from "../config/api";
 
 const UserStatusControls = ({ currentUser, onStatusUpdate }) => {
   const [newStatus, setNewStatus] = useState(currentUser.status);
@@ -18,7 +19,7 @@ const UserStatusControls = ({ currentUser, onStatusUpdate }) => {
 
     setIsUpdating(true);
     try {
-      await postData(`http://localhost:3001/status/${currentUser.userID}`, {
+      await postData(`${API_BASE_URL}/status/${currentUser.userID}`, {
         status: newStatus,
       });
 

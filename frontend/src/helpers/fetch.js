@@ -28,4 +28,5 @@ function postData(url, data) {
 
 module.exports = {
   getData,
+  postData
 };

@@ -6,11 +6,12 @@ import { Server } from "socket.io";
 const corsOptions = {
   origin: [
     "http://localhost:3000",
-    "http://127.0.0.1:3000", 
+    "http://127.0.0.1:3000",
+    "http://192.168.68.96:3000",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+  credentials: true,
 };
 
 const app = express();
@@ -18,18 +19,21 @@ const server = http.createServer(app);
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Fix Socket.IO CORS configuration
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: [
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "http://192.168.68.96:3000",
+    ],
     methods: ["GET", "POST"],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
-  
+
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
@@ -37,7 +41,13 @@ io.on("connection", (socket) => {
 
 // Use the in-memory array to store user info and statuses
 let users = [
-  { userID: 1, name: "John Doe", login: "john.doe", status: "online", lastUpdate: new Date() },
+  {
+    userID: 1,
+    name: "John Doe",
+    login: "john.doe",
+    status: "online",
+    lastUpdate: new Date(),
+  },
   {
     userID: 2,
     login: "jane.smith",
@@ -45,7 +55,13 @@ let users = [
     status: "in a meeting",
     lastUpdate: new Date(),
   },
-  { userID: 3, login: "jim.brown", name: "Jim Brown", status: "offline", lastUpdate: new Date() },
+  {
+    userID: 3,
+    login: "jim.brown",
+    name: "Jim Brown",
+    status: "offline",
+    lastUpdate: new Date(),
+  },
   {
     userID: 4,
     login: "alice.johnson",
@@ -53,7 +69,13 @@ let users = [
     status: "offline",
     lastUpdate: new Date(),
   },
-  { userID: 5, login: "bob.lee", name: "Bob Lee", status: "online", lastUpdate: new Date() },
+  {
+    userID: 5,
+    login: "bob.lee",
+    name: "Bob Lee",
+    status: "online",
+    lastUpdate: new Date(),
+  },
   {
     userID: 6,
     login: "charlie.kim",
@@ -68,7 +90,13 @@ let users = [
     status: "in a meeting",
     lastUpdate: new Date(),
   },
-  { userID: 8, login: "ethan.hunt", name: "Ethan Hunt", status: "online", lastUpdate: new Date() },
+  {
+    userID: 8,
+    login: "ethan.hunt",
+    name: "Ethan Hunt",
+    status: "online",
+    lastUpdate: new Date(),
+  },
 ];
 
 app.get("/status", cors(corsOptions), (req, res) => {
@@ -94,14 +122,14 @@ app.post("/status/:id", (req, res) => {
   }
   users[userIndex].status = status;
   users[userIndex].lastUpdate = new Date();
-  
+
   // Broadcast the update via Socket.IO
   io.emit("user-status-updated", {
     userId: parseInt(userId),
     status: status,
-    user: users[userIndex]
+    user: users[userIndex],
   });
-  
+
   res.json({
     message: "Status updated successfully",
     user: users[userIndex],
@@ -109,4 +137,6 @@ app.post("/status/:id", (req, res) => {
 });
 
 // CRITICAL: Use server.listen() instead of app.listen()
-server.listen(3001, () => console.log("API and Socket.IO running on http://localhost:3001"));
+server.listen(3001, () =>
+  console.log("API and Socket.IO running on http://localhost:3001")
+);

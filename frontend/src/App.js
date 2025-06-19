@@ -3,6 +3,7 @@ import { getData, postData } from "./helpers/fetch";
 import io from "socket.io-client";
 import LoginModal from "./components/LoginModal";
 import UserStatusControls from "./components/UserStatusControls";
+import { API_BASE_URL, SOCKET_URL } from "./config/api";
 import "./App.css";
 
 export default function App() {
@@ -15,7 +16,7 @@ export default function App() {
 
   const fetchStatuses = async () => {
     try {
-      const data = await getData("http://localhost:3001/status");
+      const data = await getData(`${API_BASE_URL}/status`);
       setUsers(data);
     } catch (error) {
       console.error("Error fetching statuses:", error);
@@ -65,7 +66,7 @@ export default function App() {
 
     // Only setup socket connection after login
     if (isLoggedIn) {
-      const newSocket = io("http://localhost:3001");
+      const newSocket = io(SOCKET_URL);
       setSocket(newSocket);
 
       // Connection event handlers

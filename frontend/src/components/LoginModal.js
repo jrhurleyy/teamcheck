@@ -15,8 +15,7 @@ const LoginModal = ({ users, onLogin, isOpen }) => {
     // Check if username exists in users data
     const user = users.find(
       (u) =>
-        u.name.toLowerCase() === username.toLowerCase() ||
-        u.email?.toLowerCase() === username.toLowerCase()
+        u.login.toLowerCase() === username.toLowerCase()
     );
 
     if (!user) {
