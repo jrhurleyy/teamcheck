@@ -45,56 +45,56 @@ let users = [
     userID: 1,
     name: "John Doe",
     login: "john.doe",
-    status: "online",
+    status: "Online",
     lastUpdate: new Date(),
   },
   {
     userID: 2,
     login: "jane.smith",
     name: "Jane Smith",
-    status: "in a meeting",
+    status: "In a Meeting",
     lastUpdate: new Date(),
   },
   {
     userID: 3,
     login: "jim.brown",
     name: "Jim Brown",
-    status: "offline",
+    status: "Offline",
     lastUpdate: new Date(),
   },
   {
     userID: 4,
     login: "alice.johnson",
     name: "Alice Johnson",
-    status: "offline",
+    status: "Offline",
     lastUpdate: new Date(),
   },
   {
     userID: 5,
     login: "bob.lee",
     name: "Bob Lee",
-    status: "online",
+    status: "Online",
     lastUpdate: new Date(),
   },
   {
     userID: 6,
     login: "charlie.kim",
     name: "Charlie Kim",
-    status: "in a meeting",
+    status: "In a Meeting",
     lastUpdate: new Date(),
   },
   {
     userID: 7,
     login: "diana.prince",
     name: "Diana Prince",
-    status: "in a meeting",
+    status: "In a Meeting",
     lastUpdate: new Date(),
   },
   {
     userID: 8,
     login: "ethan.hunt",
     name: "Ethan Hunt",
-    status: "online",
+    status: "Online",
     lastUpdate: new Date(),
   },
 ];
@@ -123,7 +123,6 @@ app.post("/status/:id", (req, res) => {
   users[userIndex].status = status;
   users[userIndex].lastUpdate = new Date();
 
-  // Broadcast the update via Socket.IO
   io.emit("user-status-updated", {
     userId: parseInt(userId),
     status: status,
@@ -136,7 +135,6 @@ app.post("/status/:id", (req, res) => {
   });
 });
 
-// CRITICAL: Use server.listen() instead of app.listen()
 server.listen(3001, () =>
   console.log("API and Socket.IO running on http://localhost:3001")
 );

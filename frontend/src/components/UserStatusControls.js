@@ -7,11 +7,10 @@ const UserStatusControls = ({ currentUser, onStatusUpdate }) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const statusOptions = [
-    { value: "online", label: "🟢 Online" },
-    { value: "offline", label: "⚫ Offline" },
-    { value: "busy", label: "🔴 Busy" },
-    { value: "away", label: "🟡 Away" },
-    { value: "in a meeting", label: "📅 In a Meeting" },
+    { value: "Online", label: "🟢 Online" },
+    { value: "Offline", label: "⚫ Offline" },
+    { value: "Away", label: "🟡 Away" },
+    { value: "In a Meeting", label: "📅 In a Meeting" },
   ];
 
   const handleStatusUpdate = async () => {
@@ -22,8 +21,6 @@ const UserStatusControls = ({ currentUser, onStatusUpdate }) => {
       await postData(`${API_BASE_URL}/status/${currentUser.userID}`, {
         status: newStatus,
       });
-
-      // Call parent callback to update UI
       if (onStatusUpdate) {
         onStatusUpdate(newStatus);
       }
@@ -31,7 +28,6 @@ const UserStatusControls = ({ currentUser, onStatusUpdate }) => {
       console.log("Status updated successfully");
     } catch (error) {
       console.error("Error updating status:", error);
-      // Reset to current status on error
       setNewStatus(currentUser.status);
     } finally {
       setIsUpdating(false);
