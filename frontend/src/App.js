@@ -1,20 +1,35 @@
 import { useEffect, useState } from "react";
+import { getData, postData } from "./helpers/fetch";
 
 export default function App() {
   const [users, setUsers] = useState([]);
   const [myStatus, setMyStatus] = useState("available");
 
   const fetchStatuses = async () => {
-    // TODO: Fetch all users' statuses from the backend
+    getData("http://localhost:3001/status")
+      .then((data) => {
+        setUsers(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching statuses:", error);
+      });
   };
 
-  const updateMyStatus = async () => {
-    // TODO: Update the user's status in the backend
-    fetchStatuses();
-  };
+  // const updateStatusByID = async () => {
+  //   postData(`http://localhost:3001/status/${userID}`, { status: myStatus })
+  //     .then((data) => {
+  //       console.log("Status updated:", data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error updating status:", error);
+  //     });
+  //   fetchStatuses();
+  // };
 
   useEffect(() => {
-    // TODO: Polling to fetch statuses every 10 seconds
+    fetchStatuses();
+    const interval = setInterval(fetchStatuses, 5000); // Fetch statuses every 5 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
   return (
@@ -22,7 +37,32 @@ export default function App() {
       <h1>
         <center>TeamCheck</center>
       </h1>
-      {/* TODO: Implement your intefrace here*/}
+      {users.length > 0 ? (
+        <div>
+          <table class="table">
+            <thead>
+              <tr>
+                {users.map((user) => (
+                  <th key={user.userID}>
+                    {user.name}
+                    <br />
+                    <span className={`badge ${user.status === "online" ? "bg-success" : user.status === "offline" ? "bg-secondary" : "bg-warning"}`}>
+                      {user.status}
+                    </span>
+                    <br />
+                    <small>
+                      Last updated:{" "}
+                      {new Date(user.lastUpdate).toLocaleTimeString()}
+                    </small>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          </table>
+        </div>
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 }
