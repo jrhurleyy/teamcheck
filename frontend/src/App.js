@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { getData, postData } from "./helpers/fetch";
+import io from "socket.io-client";
 
 export default function App() {
   const [users, setUsers] = useState([]);
   const [myStatus, setMyStatus] = useState("available");
+  const [socket, setSocket] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [messages, setMessages] = useState([]);
 
   const fetchStatuses = async () => {
     getData("http://localhost:3001/status")
@@ -28,6 +32,21 @@ export default function App() {
 
   useEffect(() => {
     fetchStatuses();
+    const newSocket = io("http://localhost:3001");
+    setSocket(newSocket);
+
+    // Connection event handlers
+    newSocket.on("connect", () => {
+      console.log("Connected to server!");
+      setIsConnected(true);
+      setMessages((prev) => [...prev, "Connected to server!"]);
+    });
+
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from server");
+      setIsConnected(false);
+      setMessages((prev) => [...prev, "Disconnected from server"]);
+    });
     const interval = setInterval(fetchStatuses, 5000); // Fetch statuses every 5 seconds
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
@@ -46,7 +65,15 @@ export default function App() {
                   <th key={user.userID}>
                     {user.name}
                     <br />
-                    <span className={`badge ${user.status === "online" ? "bg-success" : user.status === "offline" ? "bg-secondary" : "bg-warning"}`}>
+                    <span
+                      className={`badge ${
+                        user.status === "online"
+                          ? "bg-success"
+                          : user.status === "offline"
+                          ? "bg-secondary"
+                          : "bg-warning"
+                      }`}
+                    >
                       {user.status}
                     </span>
                     <br />

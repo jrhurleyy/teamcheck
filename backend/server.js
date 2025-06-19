@@ -1,19 +1,45 @@
 import express from "express";
+import http from "http";
 import cors from "cors";
-
-const app = express();
-app.use(cors());
-app.use(express.json());
+import { Server } from "socket.io";
 
 const corsOptions = {
   origin: [
-    "http://localhost:3000", // React dev server
-    "http://127.0.0.1:3000", // Alternative localhost
+    "http://localhost:3000",
+    "http://127.0.0.1:3000", 
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // If you need to send cookies/auth headers
+  credentials: true
 };
+
+const app = express();
+const server = http.createServer(app);
+app.use(cors(corsOptions));
+app.use(express.json());
+
+// Fix Socket.IO CORS configuration
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+  
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+  
+  // Add a test event
+  socket.on("test", (data) => {
+    console.log("Test event received:", data);
+    socket.emit("test-response", { message: "Hello from server!" });
+  });
+});
 
 // Use the in-memory array to store user info and statuses
 let users = [
@@ -70,10 +96,19 @@ app.post("/status/:id", (req, res) => {
   }
   users[userIndex].status = status;
   users[userIndex].lastUpdate = new Date();
+  
+  // Broadcast the update via Socket.IO
+  io.emit("user-status-updated", {
+    userId: parseInt(userId),
+    status: status,
+    user: users[userIndex]
+  });
+  
   res.json({
     message: "Status updated successfully",
     user: users[userIndex],
   });
 });
 
-app.listen(3001, () => console.log("API running on http://localhost:3001"));
+// CRITICAL: Use server.listen() instead of app.listen()
+server.listen(3001, () => console.log("API and Socket.IO running on http://localhost:3001"));
