@@ -19,7 +19,7 @@ export default function App() {
       });
   };
 
-  // const updateStatusByID = async () => {
+  // const updateStatusByID = async (userID) => {
   //   postData(`http://localhost:3001/status/${userID}`, { status: myStatus })
   //     .then((data) => {
   //       console.log("Status updated:", data);
@@ -47,9 +47,15 @@ export default function App() {
       setIsConnected(false);
       setMessages((prev) => [...prev, "Disconnected from server"]);
     });
-    const interval = setInterval(fetchStatuses, 5000); // Fetch statuses every 5 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("user-status-updated", (data) => {
+      console.log("Received Web Socket Event -- Refreshing Users...");
+      fetchStatuses();
+    });
+  }, [socket]);
 
   return (
     <div style={{ padding: 20 }}>

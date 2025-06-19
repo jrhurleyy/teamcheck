@@ -33,12 +33,6 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
-  
-  // Add a test event
-  socket.on("test", (data) => {
-    console.log("Test event received:", data);
-    socket.emit("test-response", { message: "Hello from server!" });
-  });
 });
 
 // Use the in-memory array to store user info and statuses
