@@ -68,7 +68,7 @@ const UserStatusControls = ({
         </button>
       </div>
 
-      <p style={{ marginTop: "0.5rem", color: "#666", fontSize: "0.9rem" }}>
+      <p className="user-status-display">
         Current status: <strong>{currentUser.status}</strong>
       </p>
     </div>

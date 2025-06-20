@@ -15,6 +15,11 @@
   vertical-align: top;
 }
 
+.user-badge {
+  color: #007acc;
+  margin-left: 5px;
+}
+
 .badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;

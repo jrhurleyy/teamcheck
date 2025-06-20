@@ -128,9 +128,7 @@ export default function App() {
                       <th key={user.userID}>
                         {user.name}
                         {user.userID === currentUser.userID && (
-                          <span style={{ color: "#007acc", marginLeft: "5px" }}>
-                            (You)
-                          </span>
+                          <span className="user-badge">(You)</span>
                         )}
                         <br />
                         <span
