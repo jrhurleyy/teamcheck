@@ -116,3 +116,12 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+/* Socket Container */
+.socket-status-container{
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px;
+  border-radius: 5px;
+}

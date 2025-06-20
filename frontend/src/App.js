@@ -161,13 +161,9 @@ export default function App() {
             <div>Loading team data...</div>
           )}
           <div
+            className="socket-status-container"
             style={{
-              position: "fixed",
-              bottom: "20px",
-              left: "20px",
               background: isConnected ? "#d4edda" : "#f8d7da",
-              padding: "10px",
-              borderRadius: "5px",
               border: `1px solid ${isConnected ? "#c3e6cb" : "#f5c6cb"}`,
             }}
           >
