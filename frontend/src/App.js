@@ -103,9 +103,6 @@ export default function App() {
         <>
           <div className="user-info">
             <h4>Welcome, {currentUser.name}!</h4>
-            <p>
-              Status: <strong>{currentUser.status}</strong>
-            </p>
             <p>Connected: {isConnected ? "🟢 Yes" : "🔴 No"}</p>
             <button className="logout-button" onClick={handleLogout}>
               Logout

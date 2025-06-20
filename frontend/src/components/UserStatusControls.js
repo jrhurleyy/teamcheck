@@ -67,10 +67,6 @@ const UserStatusControls = ({
           {isUpdating ? "Updating..." : "Update Status"}
         </button>
       </div>
-
-      <p className="user-status-display">
-        Current status: <strong>{currentUser.status}</strong>
-      </p>
     </div>
   );
 };
