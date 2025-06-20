@@ -1,6 +1,14 @@
-function getData(url) {
+function getData(url, auth = null) {
+  const headers = {};
+  if (auth) {
+    headers.Authorization = `Basic ${btoa(
+      `${auth.username}:${auth.password}`
+    )}`;
+  }
+
   return fetch(url, {
     method: "GET",
+    headers,
     credentials: "include",
   }).then((response) => {
     if (!response.ok) {
@@ -10,12 +18,19 @@ function getData(url) {
   });
 }
 
-function postData(url, data) {
+function postData(url, data, auth = null) {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (auth) {
+    headers.Authorization = `Basic ${btoa(
+      `${auth.username}:${auth.password}`
+    )}`;
+  }
+
   return fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     credentials: "include",
     body: JSON.stringify(data),
   }).then((response) => {
@@ -28,5 +43,5 @@ function postData(url, data) {
 
 module.exports = {
   getData,
-  postData
+  postData,
 };

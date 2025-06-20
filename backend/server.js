@@ -99,17 +99,68 @@ let users = [
   },
 ];
 
-app.get("/status", cors(corsOptions), (req, res) => {
+// Simple authentication middleware
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Basic ")) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
+  try {
+    const base64Credentials = authHeader.split(" ")[1];
+    const credentials = Buffer.from(base64Credentials, "base64").toString(
+      "ascii"
+    );
+    const [username, password] = credentials.split(":");
+
+    if (!username) {
+      return res.status(401).json({ error: "Username is required" });
+    }
+
+    // Check if username exists in our users array
+    const validUser = users.find(
+      (user) => user.login.toLowerCase() === username.toLowerCase()
+    );
+    if (!validUser) {
+      return res.status(401).json({ error: "Invalid username" });
+    }
+
+    // Accept any password (as requested)
+    if (!password) {
+      return res.status(401).json({ error: "Password is required" });
+    }
+
+    // Add user info to request for use in routes
+    req.authenticatedUser = validUser;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: "Invalid authentication format" });
+  }
+};
+
+// Public endpoint to get user list for login (no authentication required)
+app.get("/users", cors(corsOptions), (req, res) => {
+  // Return only the information needed for login
+  const userList = users.map((user) => ({
+    userID: user.userID,
+    name: user.name,
+    login: user.login,
+  }));
+  res.json(userList);
+});
+
+app.get("/status", cors(corsOptions), authenticate, (req, res) => {
   res.json(users);
 });
 
-app.get("/status/:id", cors(corsOptions), (req, res) => {
+app.get("/status/:id", cors(corsOptions), authenticate, (req, res) => {
   users.find((user) => user.userID === parseInt(req.params.id))
     ? res.json(users.find((user) => user.userID === parseInt(req.params.id)))
     : res.status(404).send("User not found");
 });
 
-app.post("/status/:id", (req, res) => {
+app.post("/status/:id", authenticate, (req, res) => {
   const userId = req.params.id;
   const { status } = req.body;
   const userIndex = users.findIndex((user) => user.userID === parseInt(userId));
@@ -133,6 +184,17 @@ app.post("/status/:id", (req, res) => {
     message: "Status updated successfully",
     user: users[userIndex],
   });
+});
+
+// Public endpoint to get user list for login (no authentication required)
+app.get("/users", cors(corsOptions), (req, res) => {
+  // Return only the information needed for login
+  const userList = users.map((user) => ({
+    userID: user.userID,
+    name: user.name,
+    login: user.login,
+  }));
+  res.json(userList);
 });
 
 server.listen(3001, () =>

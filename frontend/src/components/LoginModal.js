@@ -12,10 +12,8 @@ const LoginModal = ({ users, onLogin, isOpen }) => {
     setError("");
     setIsLoading(true);
 
-    // Check if username exists in users data
     const user = users.find(
-      (u) =>
-        u.login.toLowerCase() === username.toLowerCase()
+      (u) => u.login.toLowerCase() === username.toLowerCase()
     );
 
     if (!user) {
@@ -24,11 +22,9 @@ const LoginModal = ({ users, onLogin, isOpen }) => {
       return;
     }
 
-    // Simulate authentication delay
     setTimeout(() => {
       if (password.length > 0) {
-        // Any password is accepted (dummy authentication)
-        onLogin(user);
+        onLogin(user, { username: user.login, password });
       } else {
         setError("Please enter a password.");
       }

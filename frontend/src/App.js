@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getData, postData } from "./helpers/fetch";
 import io from "socket.io-client";
 import LoginModal from "./components/LoginModal";
@@ -11,29 +11,45 @@ export default function App() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authCredentials, setAuthCredentials] = useState(null);
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState([]);
 
-  const fetchStatuses = async () => {
+  const handleLogout = useCallback(() => {
+    setCurrentUser(null);
+    setAuthCredentials(null);
+    setIsLoggedIn(false);
+    console.log("User logged out");
+  }, []);
+
+  const fetchStatuses = useCallback(async () => {
     try {
-      const data = await getData(`${API_BASE_URL}/status`);
+      const data = await getData(`${API_BASE_URL}/status`, authCredentials);
       setUsers(data);
     } catch (error) {
       console.error("Error fetching statuses:", error);
+      if (error.status === 401) {
+        // If unauthorized, log the user out
+        handleLogout();
+      }
     }
-  };
+  }, [authCredentials, handleLogout]);
 
-  const handleLogin = (user) => {
+  const fetchUserList = useCallback(async () => {
+    try {
+      const data = await getData(`${API_BASE_URL}/users`);
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching user list:", error);
+    }
+  }, []);
+
+  const handleLogin = (user, credentials) => {
     setCurrentUser(user);
+    setAuthCredentials(credentials);
     setIsLoggedIn(true);
     console.log(`User ${user.name} logged in successfully`);
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setIsLoggedIn(false);
-    console.log("User logged out");
   };
 
   const handleStatusUpdate = (newStatus) => {
@@ -48,8 +64,8 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetchStatuses();
-    if (isLoggedIn) {
+    if (isLoggedIn && authCredentials) {
+      fetchStatuses();
       const newSocket = io(SOCKET_URL);
       setSocket(newSocket);
       newSocket.on("connect", () => {
@@ -67,8 +83,11 @@ export default function App() {
       return () => {
         newSocket.close();
       };
+    } else {
+      // Fetch user list for login
+      fetchUserList();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, authCredentials, fetchStatuses, fetchUserList]);
 
   useEffect(() => {
     if (!socket) return;
@@ -76,7 +95,7 @@ export default function App() {
       console.log("Received Web Socket Event -- Refreshing Users...");
       fetchStatuses();
     });
-  }, [socket]);
+  }, [socket, fetchStatuses]);
 
   return (
     <div style={{ padding: 20 }}>
@@ -99,6 +118,7 @@ export default function App() {
           <UserStatusControls
             currentUser={currentUser}
             onStatusUpdate={handleStatusUpdate}
+            authCredentials={authCredentials}
           />
           {users.length > 0 ? (
             <div>
