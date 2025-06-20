@@ -16,6 +16,7 @@ export default function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState([]);
 
+  /*Use Callback used in this context for optimized application rendering between refreshes of the components!*/
   const handleLogout = useCallback(() => {
     setCurrentUser(null);
     setAuthCredentials(null);
