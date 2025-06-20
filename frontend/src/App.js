@@ -30,7 +30,6 @@ export default function App() {
     } catch (error) {
       console.error("Error fetching statuses:", error);
       if (error.status === 401) {
-        // If unauthorized, log the user out
         handleLogout();
       }
     }
@@ -84,7 +83,6 @@ export default function App() {
         newSocket.close();
       };
     } else {
-      // Fetch user list for login
       fetchUserList();
     }
   }, [isLoggedIn, authCredentials, fetchStatuses, fetchUserList]);

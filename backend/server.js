@@ -99,7 +99,6 @@ let users = [
   },
 ];
 
-// Simple authentication middleware
 const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -118,7 +117,6 @@ const authenticate = (req, res, next) => {
       return res.status(401).json({ error: "Username is required" });
     }
 
-    // Check if username exists in our users array
     const validUser = users.find(
       (user) => user.login.toLowerCase() === username.toLowerCase()
     );
@@ -126,12 +124,10 @@ const authenticate = (req, res, next) => {
       return res.status(401).json({ error: "Invalid username" });
     }
 
-    // Accept any password (as requested)
     if (!password) {
       return res.status(401).json({ error: "Password is required" });
     }
 
-    // Add user info to request for use in routes
     req.authenticatedUser = validUser;
     next();
   } catch (error) {
@@ -139,25 +135,8 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Public endpoint to get user list for login (no authentication required)
-app.get("/users", cors(corsOptions), (req, res) => {
-  // Return only the information needed for login
-  const userList = users.map((user) => ({
-    userID: user.userID,
-    name: user.name,
-    login: user.login,
-  }));
-  res.json(userList);
-});
-
 app.get("/status", cors(corsOptions), authenticate, (req, res) => {
   res.json(users);
-});
-
-app.get("/status/:id", cors(corsOptions), authenticate, (req, res) => {
-  users.find((user) => user.userID === parseInt(req.params.id))
-    ? res.json(users.find((user) => user.userID === parseInt(req.params.id)))
-    : res.status(404).send("User not found");
 });
 
 app.post("/status/:id", authenticate, (req, res) => {
@@ -186,9 +165,7 @@ app.post("/status/:id", authenticate, (req, res) => {
   });
 });
 
-// Public endpoint to get user list for login (no authentication required)
 app.get("/users", cors(corsOptions), (req, res) => {
-  // Return only the information needed for login
   const userList = users.map((user) => ({
     userID: user.userID,
     name: user.name,
