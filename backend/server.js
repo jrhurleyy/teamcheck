@@ -7,7 +7,7 @@ const corsOptions = {
   origin: [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://192.168.68.96:3000",
+    "http://192.168.68.104:3000",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -20,15 +20,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 const io = new Server(server, {
-  cors: {
-    origin: [
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-      "http://192.168.68.96:3000",
-    ],
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
+  cors: corsOptions
 });
 
 io.on("connection", (socket) => {
@@ -45,7 +37,7 @@ let users = [
     userID: 1,
     name: "John Doe",
     login: "john.doe",
-    status: "Online",
+    status: "Away",
     lastUpdate: new Date(),
   },
   {
